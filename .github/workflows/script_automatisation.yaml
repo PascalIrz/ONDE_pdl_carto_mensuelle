@@ -27,11 +27,13 @@ jobs:
           pandoc-version: '2.17.1' # Pandoc version pour compiler.
           
       - name: Installation packages in dev
-        run: Rscript -e 'devtools::install_github("richaben/ondetools")'
+        run: |
+          Rscript -e 'devtools::install_github("richaben/ondetools")'
+          Rscript -e 'devtools::install_github("inrae/hubeau")'
         
       - name: Install dependencies
         run: |
-          install.packages(c("hubeau", "leaflet", "leaflet.extras","ggrepel", "scales", "data.table"))
+          install.packages(c("leaflet", "leaflet.extras","ggrepel", "scales", "data.table"))
         shell: Rscript {0}
         
       - name: Execute Scripts Telechargement et Mise en forme
