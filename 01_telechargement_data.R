@@ -115,12 +115,13 @@ mes_couleurs_4mod <- c(#"Ecoulement\nvisible" = "#0570b0",
 onde_periode <-
   onde_df %>% select(-c(libelle_reseau, 
                         code_type_campagne, 
-                        uri_reseau, 
-                        uri_station, 
-                        uri_cours_eau,
-                        code_projection_station,
-                        date_maj_station)) %>% 
-  filter(etat_station == 'Active') %>% 
+                        # uri_reseau , 
+                        # uri_station, 
+                        # uri_cours_eau,
+                        #c ode_projection_station,
+                        # date_maj_station
+                        )) %>% 
+ # filter(etat_station == 'Active') %>% 
   mutate(Mois = format(as.Date(date_campagne),"%m"), 
          Mois_campagne = lubridate::ym(paste0(Annee,Mois,sep="-"))) %>% 
   mutate(lib_ecoul3mod = case_when(libelle_ecoulement == 'Ecoulement visible faible' ~ 'Ecoulement visible',
@@ -140,8 +141,10 @@ onde_periode <-
          lib_ecoul3mod,
          lib_ecoul4mod,
          libelle_type_campagne,
-         coordonnee_x_station, 
-         coordonnee_y_station,
+       #  coordonnee_x_station, 
+         longitude,
+        # coordonnee_y_station,
+       latitude,
          code_departement)
 
 
@@ -168,10 +171,13 @@ onde_dernieres_campagnes_comp <-
   ungroup() %>% 
   filter(Mois_campagne == max(Mois_campagne)) %>% 
   mutate(Couleur = recode(str_wrap(lib_ecoul3mod,12), !!!mes_couleurs_3mod)) %>% 
-  sf::st_as_sf(coords = c("coordonnee_x_station",
-                          "coordonnee_y_station"), 
-               crs = 2154) %>% 
-  sf::st_transform(crs = 4326)  %>% 
+  # sf::st_as_sf(coords = c("coordonnee_x_station",
+  #                         "coordonnee_y_station"), 
+  #              crs = 2154) %>% 
+  # sf::st_transform(crs = 4326)  %>% 
+  sf::st_as_sf(coords = c("longitude",
+                          "latitude"), 
+               crs = 4326) %>% 
   mutate(label_point = glue::glue('{libelle_station}; {lib_ecoul3mod} (dern. obs.: {date_campagne})'))
 
 
@@ -181,12 +187,18 @@ stations_onde_geo <-
   dplyr::ungroup() %>% 
   dplyr::select(code_station ,
                 libelle_station,
-                coordonnee_x_station, 
-                coordonnee_y_station,
+                # coordonnee_x_station, 
+                # coordonnee_y_station,
+                longitude,
+                latitude,
                 code_departement) %>% 
-  sf::st_as_sf(coords = c("coordonnee_x_station",
-                          "coordonnee_y_station"), 
-               crs = 2154)
+  # sf::st_as_sf(coords = c("coordonnee_x_station",
+  #                         "coordonnee_y_station"), 
+  #              crs = 2154)
+  sf::st_as_sf(coords = c("longitude",
+                          "latitude"), 
+               crs = 4326) %>% 
+  sf::st_transform(crs = 2154)
 
 ## calculs assecs periode ete sur campagnes usuelles
 assecs <- 
